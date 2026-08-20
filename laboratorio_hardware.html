@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laboratório Interativo de Eletroeletrônica & Hardware</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --card-bg: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            user-select: none; /* Impede seleção de texto */
+            -webkit-user-select: none;
+        }
+
+        body {
+            background-color: var(--light);
+            color: #334155;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--dark), #1e293b);
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .back-home-btn {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: rgba(255,255,255,0.15);
+            color: white;
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            transition: 0.3s;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .back-home-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            color: #94a3b8;
+            font-size: 0.95rem;
+        }
+
+        nav {
+            display: flex;
+            justify-content: center;
+            background-color: #1e293b;
+            gap: 5px;
+            padding: 0 10px;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            background: none;
+            border: none;
+            color: #cbd5e1;
+            padding: 12px 20px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+        }
+
+        .nav-btn:hover {
+            color: white;
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .nav-btn.active {
+            color: #60a5fa;
+            border-bottom-color: #60a5fa;
+        }
+
+        main {
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 0 15px;
+            flex: 1;
+            width: 100%;
+        }
+
+        .tab-content {
+            display: none;
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 {
+            color: var(--dark);
+            margin-bottom: 15px;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 8px;
+        }
+
+        /* Simulador de Elétrons */
+        .circuit-box {
+            background: #000;
+            border-radius: 8px;
+            height: 120px;
+            position: relative;
+            overflow: hidden;
+            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+        }
+
+        .wire {
+            position: absolute;
+            top: 50%;
+            left: 5%;
+            right: 5%;
+            height: 4px;
+            background: #475569;
+            transform: translateY(-50%);
+        }
+
+        .electron {
+            width: 12px;
+            height: 12px;
+            background-color: #38bdf8;
+            border-radius: 50%;
+            position: absolute;
+            box-shadow: 0 0 8px #38bdf8;
+            top: calc(50% - 6px);
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .btn-danger { background-color: var(--danger); }
+        .btn-warning { background-color: var(--warning); color: #000; }
+
+        /* Grade de Cards */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .card {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 15px;
+            background: #f8fafc;
+            transition: transform 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+        }
+
+        .card h4 {
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        /* Linha do Tempo */
+        .timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            position: relative;
+            margin-top: 20px;
+        }
+
+        .timeline-item {
+            display: flex;
+            gap: 15px;
+            background: #f1f5f9;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 5px solid var(--primary);
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .timeline-item:hover {
+            background: #e2e8f0;
+        }
+
+        .gen-badge {
+            background: var(--dark);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            height: fit-content;
+        }
+
+        /* Animação CPU */
+        .cpu-diagram {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #1e293b;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .cpu-block {
+            border: 2px dashed #64748b;
+            padding: 15px;
+            border-radius: 6px;
+            text-align: center;
+            flex: 1;
+            min-width: 140px;
+        }
+
+        .cpu-core {
+            border-color: #f59e0b;
+            background: rgba(245, 158, 11, 0.1);
+        }
+
+        /* Quiz */
+        .quiz-option {
+            display: block;
+            width: 100%;
+            text-align: left;
+            padding: 12px;
+            margin: 8px 0;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            background: white;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .quiz-option:hover {
+            background: #f1f5f9;
+        }
+
+        .quiz-option.correct {
+            background: #d1fae5;
+            border-color: #10b981;
+            color: #065f46;
+        }
+
+        .quiz-option.wrong {
+            background: #fee2e2;
+            border-color: #ef4444;
+            color: #991b1b;
+        }
+
+        .alert-box {
+            padding: 12px;
+            border-radius: 6px;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .alert-danger { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+        .alert-success { background: #d1fae5; color: #065f46; border: 1px solid #6ee7b7; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="index.html" class="back-home-btn">← Voltar ao Menu Principal</a>
+        <h1>⚡ Laboratório de Eletrônica & Hardware</h1>
+        <p>Aprenda de forma prática e interativa como a eletricidade dá vida à computação!</p>
+    </header>
+
+    <nav>
+        <button class="nav-btn active" id="btn-eletronica" onclick="switchTab('eletronica')">⚡ Eletrônica & Riscos</button>
+        <button class="nav-btn" id="btn-protecao" onclick="switchTab('protecao')">🛡️ Proteção Elétrica</button>
+        <button class="nav-btn" id="btn-hardware" onclick="switchTab('hardware')">⏳ Eras do Hardware</button>
+        <button class="nav-btn" id="btn-cpu" onclick="switchTab('cpu')">🧠 Arquitetura da CPU</button>
+        <button class="nav-btn" id="btn-quiz" onclick="switchTab('quiz')">🎮 Desafio Quick-Quiz</button>
+    </nav>
+
+    <main>
+        <!-- MÓDULO 1: ELETRÔNICA -->
+        <section id="eletronica" class="tab-content active">
+            <h2>Como os Elétrons se Movem?</h2>
+            <p>Eletricidade nada mais é do que o <strong>fluxo ordenado de elétrons livres</strong> através de um condutor (como o cobre).</p>
+            
+            <div class="circuit-box" id="circuit">
+                <div class="wire"></div>
+            </div>
+
+            <div class="controls">
+                <button class="btn" onclick="setMode('DC')">Modo CC (Corrente Contínua - Pilhas/USB)</button>
+                <button class="btn" onclick="setMode('AC')">Modo CA (Corrente Alternada - Tomadas)</button>
+                <button class="btn btn-warning" onclick="stopCircuit()">Pausar Fluxo</button>
+            </div>
+
+            <div id="elec-info" class="card" style="margin-top: 15px;">
+                <h4 id="elec-title">Corrente Contínua (CC)</h4>
+                <p id="elec-desc">Os elétrons caminham sempre no mesmo sentido. É o tipo de corrente usada em circuitos digitais, baterias, placas-mãe e nas saídas da fonte ATX do computador (12V, 5V, 3.3V).</p>
+            </div>
+
+            <div class="grid">
+                <div class="card">
+                    <h4>⚛️ Átomo & Ionização</h4>
+                    <p>Prótons (+) e Nêutrons ficam no núcleo. Os <strong>Elétrons (-)</strong> orbitam ao redor e se movimentam de um átomo para o outro. Ganhar ou perder elétrons chama-se <strong>Ionização</strong>.</p>
+                </div>
+                <div class="card">
+                    <h4>🔌 Condutores vs. Isolantes</h4>
+                    <p><strong>Condutores (Cobre, Alumínio):</strong> possuem elétrons livres que se movem fácil.<br><strong>Isolantes (Borracha, Plástico):</strong> elétrons ficam presos.</p>
+                </div>
+                <div class="card">
+                    <h4>🌊 Frequência (Hertz - Hz)</h4>
+                    <p>Mede quantos ciclos ocorrem por segundo. A tomada da sua casa opera em <strong>60 Hz</strong>. Já o processador de um PC opera em bilhões de ciclos por segundo (ex: 3 GHz = 3 bilhões/s!).</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- MÓDULO 2: PROTEÇÃO -->
+        <section id="protecao" class="tab-content">
+            <h2>Dispositivos de Proteção Elétrica</h2>
+            <p>Sistemas de TI precisam de energia estável e segura. Veja o que acontece quando ocorrem anomalias:</p>
+
+            <div class="controls" style="margin-top: 15px;">
+                <button class="btn btn-danger" onclick="triggerEvent('sobrecarga')">Simular Sobrecarga / Curto-Circuito</button>
+                <button class="btn btn-warning" onclick="triggerEvent('fuga')">Simular Fuga de Corrente (Choque)</button>
+                <button class="btn btn-danger" onclick="triggerEvent('surto')">Simular Raio / Surto de Tensão</button>
+                <button class="btn" onclick="resetProtection()">Resetar Painel</button>
+            </div>
+
+            <div id="prot-alert" class="alert-box"></div>
+
+            <div class="grid">
+                <div class="card" id="card-disjuntor">
+                    <h4>🔌 Disjuntor & Fusível</h4>
+                    <p>Protegem a <strong>instalação elétrica</strong> contra sobrecarga e curto-circuito. O fusível queima (descartável); o disjuntor desarma (reutilizável).</p>
+                </div>
+                <div class="card" id="card-dr">
+                    <h4>⚡ DR (Diferencial Residual)</h4>
+                    <p>Protege as <strong>pessoas</strong> contra choques elétricos. Se detectar fuga de corrente superior a 30 mA (capaz de causar fibrilação cardíaca), corta a energia instantaneamente.</p>
+                </div>
+                <div class="card" id="card-dps">
+                    <h4>🌩️ DPS (Proteção contra Surtos)</h4>
+                    <p>Protege os <strong>equipamentos eletrônicos</strong> (fontes, placas) contra picos de tensão causados por raios na rede elétrica.</p>
+                </div>
+                <div class="card">
+                    <h4>🌱 Aterramento Elétrico</h4>
+                    <p>Conecta a carcaça metálica ao solo (referência 0 Volt). Se um fio descascado encostar no gabinete, a corrente vai para a terra em vez de dar choque em quem tocar no PC.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- MÓDULO 3: GERAÇÕES -->
+        <section id="hardware" class="tab-content">
+            <h2>Linha do Tempo: As 5 Gerações do Hardware</h2>
+            <p>Clique em cada geração para entender como a eletrônica permitiu a evolução da computação:</p>
+
+            <div class="timeline">
+                <div class="timeline-item" onclick="showGen(1)">
+                    <span class="gen-badge">1ª Geração (1940-1950)</span>
+                    <div>
+                        <strong>Válvulas Eletrônicas</strong>
+                        <p>Exemplo: ENIAC. Computadores gigantescos, muito quentes, pouco confiáveis e alto consumo elétrico.</p>
+                    </div>
+                </div>
+                <div class="timeline-item" onclick="showGen(2)">
+                    <span class="gen-badge">2ª Geração (1950-1960)</span>
+                    <div>
+                        <strong>Transistores & Diodos</strong>
+                        <p>Invenção do Transistor. Reduziu o tamanho, aumentou a eficiência e permitiu linguagens como COBOL e FORTRAN.</p>
+                    </div>
+                </div>
+                <div class="timeline-item" onclick="showGen(3)">
+                    <span class="gen-badge">3ª Geração (1960-1970)</span>
+                    <div>
+                        <strong>Circuitos Integrados (Chips / CIs)</strong>
+                        <p>Vários transistores miniaturizados em uma lâmina de silício. Surgem os minicomputadores e a multiprogramação.</p>
+                    </div>
+                </div>
+                <div class="timeline-item" onclick="showGen(4)">
+                    <span class="gen-badge">4ª Geração (1970-1980)</span>
+                    <div>
+                        <strong>Microprocessadores (PCs)</strong>
+                        <p>A CPU inteira em um único chip (ex: Intel 4004). Início dos Computadores Pessoais populares e mais acessíveis.</p>
+                    </div>
+                </div>
+                <div class="timeline-item" onclick="showGen(5)">
+                    <span class="gen-badge">5ª Geração (Atual)</span>
+                    <div>
+                        <strong>Alta Conectividade, IA & Computação Quântica</strong>
+                        <p>Processadores com bilhões de transistores, multi-core, arquiteturas de 64 bits, nuvem, IoT e redes neurais.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="gen-modal" class="card" style="margin-top: 15px; display: none; background: #e0f2fe; border-color: #38bdf8;">
+                <h4 id="gen-title"></h4>
+                <p id="gen-text"></p>
+            </div>
+        </section>
+
+        <!-- MÓDULO 4: CPU -->
+        <section id="cpu" class="tab-content">
+            <h2>O "Cérebro" do Computador: CPU & Fluxo de Dados</h2>
+            <p>O hardware funciona processando dados em um fluxo contínuo de três etapas:</p>
+
+            <div class="cpu-diagram">
+                <div class="cpu-block">
+                    📥 <strong>ENTRADA (Input)</strong>
+                    <p style="font-size: 0.85rem; margin-top: 5px;">Teclado, Mouse, Microfone</p>
+                </div>
+                <div style="font-size: 1.5rem;">➔</div>
+                <div class="cpu-block cpu-core">
+                    ⚙️ <strong>PROCESSADOR (CPU)</strong>
+                    <div style="font-size: 0.8rem; text-align: left; margin-top: 8px;">
+                        • <strong>UC (Unidade de Controle):</strong> "O Maestro" - decodifica ordens.<br>
+                        • <strong>ULA (Unidade Lógica/Aritmética):</strong> Faz os cálculos e decisões.<br>
+                        • <strong>Registradores:</strong> Memórias ultra-rápidas locais.
+                    </div>
+                </div>
+                <div style="font-size: 1.5rem;">➔</div>
+                <div class="cpu-block">
+                    📤 <strong>SAÍDA (Output)</strong>
+                    <p style="font-size: 0.85rem; margin-top: 5px;">Monitor, Impressora, Som</p>
+                </div>
+            </div>
+
+            <div class="grid">
+                <div class="card">
+                    <h4>💾 Memória RAM</h4>
+                    <p>Armazena dados temporariamente enquanto o computador está ligado (volátil). É rápida e direta para o uso da CPU.</p>
+                </div>
+                <div class="card">
+                    <h4>💽 Armazenamento (HD / SSD)</h4>
+                    <p>Guarda os arquivos e sistema permanentemente. O SSD é muito mais rápido por não usar partes mecânicas móveis.</p>
+                </div>
+                <div class="card">
+                    <h4>🚌 Barramentos</h4>
+                    <p>Conjunto de caminhos condutores elétricos na placa-mãe por onde trafegam as informações entre a CPU, memória e periféricos.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- MÓDULO 5: QUIZ -->
+        <section id="quiz" class="tab-content">
+            <h2>🎮 Quiz Interativo de Fixação</h2>
+            <p>Teste seus conhecimentos acumulados no laboratório!</p>
+
+            <div id="quiz-container" style="margin-top: 15px;">
+                <div class="card" id="q1">
+                    <h4>1. Por que o limite de 30 mA de corrente elétrica é crítico para o corpo humano?</h4>
+                    <button class="quiz-option" onclick="checkQuiz(this, false, 'q1')">A) Pois queima as roupas instantaneamente.</button>
+                    <button class="quiz-option" onclick="checkQuiz(this, true, 'q1')">B) Pois acima de 30 mA pode causar fibrilação cardíaca fatal.</button>
+                    <button class="quiz-option" onclick="checkQuiz(this, false, 'q1')">C) É a corrente mínima necessária para ligar um LED.</button>
+                </div>
+
+                <div class="card" id="q2" style="margin-top: 15px;">
+                    <h4>2. Qual componente da CPU é responsável por realizar cálculos de matemática e comparações lógicas?</h4>
+                    <button class="quiz-option" onclick="checkQuiz(this, false, 'q2')">A) Unidade de Controle (UC)</button>
+                    <button class="quiz-option" onclick="checkQuiz(this, true, 'q2')">B) Unidade Lógica e Aritmética (ULA)</button>
+                    <button class="quiz-option" onclick="checkQuiz(this, false, 'q2')">C) Disco Rígido (SSD)</button>
+                </div>
+
+                <div class="card" id="q3" style="margin-top: 15px;">
+                    <h4>3. O que caracterizou a passagem da 1ª para a 2ª geração de computadores?</h4>
+                    <button class="quiz-option" onclick="checkQuiz(this, true, 'q3')">A) Substituição das válvulas esquentadiças pelos transistores.</button>
+                    <button class="quiz-option" onclick="checkQuiz(this, false, 'q3')">B) A invenção da Internet e redes sociais.</button>
+                    <button class="quiz-option" onclick="checkQuiz(this, false, 'q3')">C) Uso de inteligência artificial generativa.</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Lógica de Abas
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            
+            const targetTab = document.getElementById(tabId);
+            const targetBtn = document.getElementById('btn-' + tabId);
+            if (targetTab) targetTab.classList.add('active');
+            if (targetBtn) targetBtn.classList.add('active');
+        }
+
+        // Suporte para Hash na URL
+        window.addEventListener('DOMContentLoaded', () => {
+            const hash = window.location.hash.replace('#', '');
+            if (hash && ['eletronica', 'protecao', 'hardware', 'cpu', 'quiz'].includes(hash)) {
+                switchTab(hash);
+            }
+        });
+
+        // Animação de Elétrons
+        const circuit = document.getElementById('circuit');
+        let electronInterval;
+        let mode = 'DC';
+
+        function createElectrons() {
+            circuit.querySelectorAll('.electron').forEach(e => e.remove());
+            const count = 12;
+            for (let i = 0; i < count; i++) {
+                const el = document.createElement('div');
+                el.className = 'electron';
+                el.style.left = (i * (100 / count)) + '%';
+                circuit.appendChild(el);
+            }
+        }
+
+        function animateElectrons() {
+            clearInterval(electronInterval);
+            createElectrons();
+            const electrons = circuit.querySelectorAll('.electron');
+            let dir = 1;
+            
+            electronInterval = setInterval(() => {
+                electrons.forEach(el => {
+                    let curLeft = parseFloat(el.style.left);
+                    
+                    if (mode === 'DC') {
+                        curLeft += 1.5;
+                        if (curLeft > 100) curLeft = 0;
+                    } else if (mode === 'AC') {
+                        curLeft += dir * 2;
+                        if (curLeft > 90 || curLeft < 10) dir *= -1;
+                    }
+                    
+                    el.style.left = curLeft + '%';
+                });
+            }, 30);
+        }
+
+        function setMode(newMode) {
+            mode = newMode;
+            const title = document.getElementById('elec-title');
+            const desc = document.getElementById('elec-desc');
+
+            if (mode === 'DC') {
+                title.innerText = 'Corrente Contínua (CC)';
+                desc.innerText = 'Os elétrons caminham sempre no mesmo sentido. É o tipo de corrente usada em circuitos digitais, baterias, placas-mãe e nas saídas da fonte ATX do computador (12V, 5V, 3.3V).';
+            } else {
+                title.innerText = 'Corrente Alternada (CA)';
+                desc.innerText = 'Os elétrons invertem de sentido periodicamente (vai e volta). É a energia distribuída pelas concessionárias que chega nas tomadas (60 Hz no Brasil). A fonte ATX do PC precisa convertê-la para CC!';
+            }
+            animateElectrons();
+        }
+
+        function stopCircuit() {
+            clearInterval(electronInterval);
+        }
+
+        // Inicializar circuito
+        animateElectrons();
+
+        // Simulação de Proteção
+        function triggerEvent(type) {
+            const alert = document.getElementById('prot-alert');
+            resetProtectionCards();
+
+            alert.style.display = 'block';
+            if (type === 'sobrecarga') {
+                alert.className = 'alert-box alert-danger';
+                alert.innerHTML = '🚨 <strong>ALERTA: SOBRECARGA / CURTO-CIRCUITO DETECTADO!</strong><br>A corrente excedeu o limite do cabo! O <strong>Disjuntor / Fusível</strong> atuou e desligou o circuito para evitar incêndio.';
+                document.getElementById('card-disjuntor').style.borderColor = 'var(--danger)';
+                document.getElementById('card-disjuntor').style.background = '#fee2e2';
+            } else if (type === 'fuga') {
+                alert.className = 'alert-box alert-danger';
+                alert.innerHTML = '🚨 <strong>ALERTA: FUGA DE CORRENTE DETECTADA (PESSOA LEVANDO CHOQUE)!</strong><br>Alguém tocou em uma carcaça energizada! O <strong>DR (Diferencial Residual)</strong> percebeu a fuga em milissegundos e desarmou a rede.';
+                document.getElementById('card-dr').style.borderColor = 'var(--danger)';
+                document.getElementById('card-dr').style.background = '#fee2e2';
+            } else if (type === 'surto') {
+                alert.className = 'alert-box alert-danger';
+                alert.innerHTML = '🚨 <strong>ALERTA: SURTO DE TENSÃO (QUEDA DE RAIO)!</strong><br>Um pico de mil volts atingiu a rede! O <strong>DPS</strong> escoou o excesso para o Aterramento, salvando a fonte do computador.';
+                document.getElementById('card-dps').style.borderColor = 'var(--danger)';
+                document.getElementById('card-dps').style.background = '#fee2e2';
+            }
+        }
+
+        function resetProtectionCards() {
+            ['card-disjuntor', 'card-dr', 'card-dps'].forEach(id => {
+                const el = document.getElementById(id);
+                el.style.borderColor = '#e2e8f0';
+                el.style.background = '#f8fafc';
+            });
+        }
+
+        function resetProtection() {
+            const alert = document.getElementById('prot-alert');
+            alert.style.display = 'none';
+            resetProtectionCards();
+        }
+
+        // Modal Linha do Tempo
+        function showGen(num) {
+            const modal = document.getElementById('gen-modal');
+            const title = document.getElementById('gen-title');
+            const text = document.getElementById('gen-text');
+            modal.style.display = 'block';
+
+            const details = {
+                1: { title: "1ª Geração: Válvulas (1940-1950)", text: "Usavam válvulas de vidro (parecidas com lâmpadas). Vantagem: permitiu os primeiros cálculos eletrônicos automatizados. Desvantagem: geravam calor extremo, queimavam fácil e ocupavam salas inteiras." },
+                2: { title: "2ª Geração: Transistores (1950-1960)", text: "Os transistores substituíram as válvulas com maestria! Ficaram muito menores, consumiam pouca energia e permitiram o surgimento de linguagens de alto nível como FORTRAN e COBOL." },
+                3: { title: "3ª Geração: Circuitos Integrados (1960-1970)", text: "Agrupou-se milhares de transistores em chips de silício (SLT). Surgiram os sistemas operacionais com capacidade de multiprogramação (vários programas rodando ao mesmo tempo)." },
+                4: { title: "4ª Geração: Microprocessadores (1970-1980)", text: "Surgiu o microprocessador, reunindo a CPU inteira em um único chip. Isso deu origem à revolução dos Computadores Pessoais (PCs de mesa) e computadores portáteis." },
+                5: { title: "5ª Geração: Era Atual & Inteligência Artificial", text: "Processadores com bilhões de transistores, computação distribuída em nuvem, inteligência artificial, redes neurais, arquitetura de 64 bits e computação quântica." }
+            };
+
+            title.innerText = details[num].title;
+            text.innerText = details[num].text;
+        }
+
+        // Quiz
+        function checkQuiz(btn, isCorrect, qId) {
+            const parent = document.getElementById(qId);
+            const options = parent.querySelectorAll('.quiz-option');
+            
+            options.forEach(opt => {
+                opt.disabled = true;
+                opt.style.cursor = 'default';
+            });
+
+            if (isCorrect) {
+                btn.classList.add('correct');
+                btn.innerHTML += ' ➔ ✅ Correto!';
+            } else {
+                btn.classList.add('wrong');
+                btn.innerHTML += ' ➔ ❌ Incorreto!';
+            }
+        }
+
+        // SCRIPT DE PROTEÇÃO CONTRA INSPEÇÃO E VISUALIZAÇÃO DE CÓDIGO FONTE
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+
+        document.addEventListener('keydown', function(e) {
+            // Tecla F12
+            if (e.key === 'F12' || e.keyCode === 123) {
+                e.preventDefault();
+                return false;
+            }
+            // Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+Shift+C
+            if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j' || e.key === 'C' || e.key === 'c' || e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) {
+                e.preventDefault();
+                return false;
+            }
+            // Ctrl+U (Visualizar Código Fonte)
+            if (e.ctrlKey && (e.key === 'u' || e.key === 'U' || e.keyCode === 85)) {
+                e.preventDefault();
+                return false;
+            }
+            // Ctrl+S (Salvar Página)
+            if (e.ctrlKey && (e.key === 's' || e.key === 'S' || e.keyCode === 83)) {
+                e.preventDefault();
+                return false;
+            }
+        });
+    </script>
+</body>
+</html>

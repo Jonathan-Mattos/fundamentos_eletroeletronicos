@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal de Estudos: Eletroeletrônica, Hardware & Lógica Digital</title>
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.75);
+            --border: rgba(255, 255, 255, 0.1);
+            --primary: #38bdf8;
+            --primary-hover: #0284c7;
+            --accent-green: #10b981;
+            --accent-purple: #a855f7;
+            --accent-amber: #f59e0b;
+            --text-light: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            user-select: none; /* Bloqueio de seleção de texto */
+            -webkit-user-select: none;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(56, 189, 248, 0.12) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(168, 85, 247, 0.12) 0%, transparent 40%);
+            background-attachment: fixed;
+            line-height: 1.6;
+        }
+
+        header {
+            background: rgba(15, 23, 42, 0.9);
+            border-bottom: 1px solid var(--border);
+            padding: 2.5rem 1.5rem;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        header h1 {
+            font-size: 2.4rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #38bdf8, #818cf8, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+    
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2.5rem 1.5rem;
+            flex: 1;
+            width: 100%;
+        }
+
+        .nav-sections {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .module-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2rem;
+            backdrop-filter: blur(12px);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .module-card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(56, 189, 248, 0.4);
+            box-shadow: 0 15px 30px -10px rgba(0, 0, 0, 0.5);
+        }
+
+        .module-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+        }
+
+        .mod-1::before { background: linear-gradient(90deg, #38bdf8, #2563eb); }
+        .mod-2::before { background: linear-gradient(90deg, #10b981, #a855f7); }
+
+        .module-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .module-tag {
+            display: inline-block;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 4px 12px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+        }
+
+        .mod-1 .module-tag { background: rgba(56, 189, 248, 0.15); color: #38bdf8; }
+        .mod-2 .module-tag { background: rgba(168, 85, 247, 0.15); color: #c084fc; }
+
+        .module-card h2 {
+            font-size: 1.6rem;
+            color: var(--text-light);
+            margin-bottom: 0.8rem;
+            line-height: 1.3;
+        }
+
+        .module-card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .topic-list {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .topic-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            margin-bottom: 8px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.2s ease;
+            text-decoration: none;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .topic-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(56, 189, 248, 0.3);
+            transform: translateX(4px);
+        }
+
+        .topic-icon {
+            font-size: 1.2rem;
+            min-width: 24px;
+            text-align: center;
+        }
+
+        .btn-access {
+            display: block;
+            text-align: center;
+            padding: 14px 20px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+        }
+
+        .mod-1 .btn-access {
+            background: #2563eb;
+            color: white;
+            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
+        }
+
+        .mod-1 .btn-access:hover {
+            background: #1d4ed8;
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.5);
+        }
+
+        .mod-2 .btn-access {
+            background: linear-gradient(135deg, #06b6d4, #8b5cf6);
+            color: white;
+            box-shadow: 0 4px 14px rgba(139, 92, 246, 0.3);
+        }
+
+        .mod-2 .btn-access:hover {
+            opacity: 0.95;
+            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.5);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .info-box {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border);
+            padding: 1.5rem;
+            border-radius: 16px;
+        }
+
+        .info-box h4 {
+            color: var(--primary);
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-box p {
+            color: var(--text-muted);
+            font-size: 0.88rem;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            background: rgba(15, 23, 42, 0.8);
+        }
+
+        /* Modal / Frame Viewer */
+        .viewer-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 23, 42, 0.95);
+            z-index: 1000;
+            flex-direction: column;
+        }
+
+        .viewer-header {
+            padding: 12px 20px;
+            background: #1e293b;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .viewer-title {
+            font-weight: bold;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .close-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        .close-btn:hover { background: #dc2626; }
+
+        .viewer-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            flex: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>⚡ Portal de Estudos Práticos em TI & Engenharia</h1>
+        <p>Acesse os ambientes interativos de simulação, laboratórios de hardware e fundamentos da lógica booleana.</p>
+       
+    </header>
+
+    <div class="container">
+        <div class="nav-sections">
+            
+            <!-- MÓDULO 1 CARD -->
+            <div class="module-card mod-1">
+                <div class="module-header">
+                    <span class="module-tag">Módulo 01 • Prático</span>
+                    <h2>Laboratório Interativo de Eletroeletrônica & Hardware</h2>
+                    <p>Explore como os elétrons se comportam, entenda dispositivos de proteção elétrica para TI e navegue pelas 5 gerações do hardware até a CPU moderna.</p>
+                </div>
+
+                <div class="topic-list">
+                    <a href="laboratorio_hardware.html#eletronica" class="topic-item">
+                        <span class="topic-icon">⚡</span>
+                        <div><strong>Eletrônica & Riscos:</strong> Fluxo de Elétrons, CC vs CA, Frequência (Hz)</div>
+                    </a>
+                    <a href="laboratorio_hardware.html#protecao" class="topic-item">
+                        <span class="topic-icon">🛡️</span>
+                        <div><strong>Proteção Elétrica:</strong> Disjuntor, DR, DPS e Aterramento</div>
+                    </a>
+                    <a href="laboratorio_hardware.html#hardware" class="topic-item">
+                        <span class="topic-icon">⏳</span>
+                        <div><strong>Eras do Hardware:</strong> Linha do Tempo das 5 Gerações</div>
+                    </a>
+                    <a href="laboratorio_hardware.html#cpu" class="topic-item">
+                        <span class="topic-icon">🧠</span>
+                        <div><strong>Arquitetura da CPU:</strong> UC, ULA, Registradores e Memórias</div>
+                    </a>
+                    <a href="laboratorio_hardware.html#quiz" class="topic-item">
+                        <span class="topic-icon">🎮</span>
+                        <div><strong>Desafio Quick-Quiz:</strong> Teste Rápido de Fixação</div>
+                    </a>
+                </div>
+
+                <a href="laboratorio_hardware.html" class="btn-access">🚀 Abrir Laboratório Completo</a>
+            </div>
+
+            <!-- MÓDULO 2 CARD -->
+            <div class="module-card mod-2">
+                <div class="module-header">
+                    <span class="module-tag">Módulo 02 • Teórico & Físico</span>
+                    <h2>A Origem Física das Tabelas Verdade</h2>
+                    <p>Descubra a convergência entre Teoria dos Conjuntos, Aritmética Binária e Circuitos Elétricos de Claude Shannon (AND, OR, XOR).</p>
+                </div>
+
+                <div class="topic-list">
+                    <a href="origem_tabelas_verdade.html#simulators" class="topic-item">
+                        <span class="topic-icon">🔌</span>
+                        <div><strong>Circuito Interativo de Shannon:</strong> Simulação de AND, OR e XOR</div>
+                    </a>
+                    <a href="origem_tabelas_verdade.html#theory" class="topic-item">
+                        <span class="topic-icon">📖</span>
+                        <div><strong>George Boole (1847-1854):</strong> A Álgebra do Pensamento e Conjuntos</div>
+                    </a>
+                    <a href="origem_tabelas_verdade.html#theory" class="topic-item">
+                        <span class="topic-icon">📊</span>
+                        <div><strong>Peirce, Post & Wittgenstein:</strong> A Formalização Matrense (1921)</div>
+                    </a>
+                    <a href="origem_tabelas_verdade.html#theory" class="topic-item">
+                        <span class="topic-icon">💡</span>
+                        <div><strong>Claude Shannon (1937):</strong> Relés e Circuitos Lógicos do M.I.T.</div>
+                    </a>
+                    <a href="origem_tabelas_verdade.html#quiz" class="topic-item">
+                        <span class="topic-icon">🎮</span>
+                        <div><strong>Desafio de Fixação:</strong> Quiz de Lógica e História</div>
+                    </a>
+                </div>
+
+                <a href="origem_tabelas_verdade.html" class="btn-access">🚀 Abrir Estudo de Tabelas Verdade</a>
+            </div>
+
+        </div>
+
+        <h3 style="color: var(--text-light); font-size: 1.4rem; margin-bottom: 1rem;">ℹ️ Guia do Estudante & Recursos do Sistema</h3>
+        <div class="info-grid">
+            <div class="info-box">
+                <h4>🎯 Aprendizado Interativo</h4>
+                <p>Alterne chaves, simule surtos elétricos e veja os elétrons e tabelas verdade se atualizarem em tempo real nos dois módulos.</p>
+            </div>
+            <div class="info-box">
+                <h4>🛡️ Proteção do Conteúdo</h4>
+                <p>As páginas contêm travas contra atalhos de desenvolvedor (F12, Ctrl+U, Ctrl+Shift+I/J/C) para manter o foco na experiência de aprendizagem sem distrações externas.</p>
+            </div>
+            <div class="info-box">
+                <h4>📱 Compatibilidade</h4>
+                <p>O ambiente é totalmente responsivo e otimizado para navegação em computadores, tablets e smartphones.</p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>Plataforma de Ensino Interativo de Eletroeletrônica & Lógica Digital • © 2026 Todos os direitos reservados</p>
+    </footer>
+
+    <!-- SCRIPT DE PROTEÇÃO CONTRA INSPEÇÃO E VISUALIZAÇÃO DE CÓDIGO FONTE -->
+    <script>
+        // Desabilitar Menu de Contexto (Clique Direito)
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+
+        // Desabilitar Atalhos de Teclado de Inspeção
+        document.addEventListener('keydown', function(e) {
+            // Tecla F12
+            if (e.key === 'F12' || e.keyCode === 123) {
+                e.preventDefault();
+                return false;
+            }
+            // Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+Shift+C
+            if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j' || e.key === 'C' || e.key === 'c' || e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) {
+                e.preventDefault();
+                return false;
+            }
+            // Ctrl+U (Visualizar Código Fonte)
+            if (e.ctrlKey && (e.key === 'u' || e.key === 'U' || e.keyCode === 85)) {
+                e.preventDefault();
+                return false;
+            }
+            // Ctrl+S (Salvar Página)
+            if (e.ctrlKey && (e.key === 's' || e.key === 'S' || e.keyCode === 83)) {
+                e.preventDefault();
+                return false;
+            }
+        });
+    </script>
+</body>
+</html>
